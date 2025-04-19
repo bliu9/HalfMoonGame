@@ -1,13 +1,20 @@
+import java.awt.*;
+
 public class MoonTile
 {
     private Player playerPossession;
     private String moonPhase;
     private int row;
     private int col;
+    private int x;
+    private int y;
+    private final int size = 100;
+    private int moonImage;
 
-    public MoonTile(String moonPhase)
+    public MoonTile(String moonPhase, int moonImage)
     {
         this.moonPhase = moonPhase;
+        this.moonImage = moonImage;
     }
 
     public MoonTile(String moonPhase,int row,int col)
@@ -15,6 +22,12 @@ public class MoonTile
         this.moonPhase = moonPhase;
         this.row = row;
         this.col = col;
+    }
+
+    public void draw(Graphics g)
+    {
+        g.setColor(Color.RED);
+        g.drawRect(x,y,size,size);
     }
 
     // Getters
@@ -41,5 +54,21 @@ public class MoonTile
 
     public void setRow(int row) {
         this.row = row;
+    }
+
+    // Getters
+    public int getSize()
+    {
+        return size;
+    }
+
+    public int getX()
+    {
+        return x;
+    }
+
+    public int getY()
+    {
+        return y;
     }
 }

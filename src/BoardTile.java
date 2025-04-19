@@ -1,3 +1,6 @@
+import java.awt.*;
+import java.util.ArrayList;
+
 public class BoardTile
 {
     private boolean isWall;
@@ -5,11 +8,16 @@ public class BoardTile
     private MoonTile playedTile;
     private int row;
     private int col;
+    private int x;
+    private int y;
+    private ArrayList<BoardTile> neighbors;
+    private final int size = 100;
 
-    public BoardTile(boolean isWall,int row,int col)
+    public BoardTile(boolean isWall,int row,int col,ArrayList<BoardTile> neighbors)
     {
         this.row = row;
         this.col = col;
+        this.neighbors = neighbors;
 
         // If the tile is a wall, then set it to closed; if the tile is a space, set it to open
         this.isWall=isWall;
@@ -32,6 +40,12 @@ public class BoardTile
         this.isOpen = false;
     }
 
+    // Draws the board tile
+    public void draw(Graphics g)
+    {
+
+    }
+
 
     // Getters
     public boolean isOpen() {
@@ -52,5 +66,16 @@ public class BoardTile
 
     public int getCol() {
         return col;
+    }
+
+    public int getX(){return x;}
+
+    public int getY(){return y;}
+
+    public int getSize(){return size;}
+
+    public ArrayList<BoardTile> getNeighbors()
+    {
+        return neighbors;
     }
 }
