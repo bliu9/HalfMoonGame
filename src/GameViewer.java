@@ -29,6 +29,7 @@ public class GameViewer extends JFrame
         // Set up the window and set it to visible
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setTitle("Half Moon Game");
+        this.setLocationRelativeTo(null);
         this.setSize(WINDOW_WIDTH,WINDOW_HEIGHT);
         this.setVisible(true);
     }
@@ -40,5 +41,6 @@ public class GameViewer extends JFrame
         g.drawImage(backgroundImage,0,0,WINDOW_WIDTH,WINDOW_HEIGHT,this);
         g.drawImage(topMoonImage,40,-250,500,500,this);
         game.getCurrentPlayer().draw(g);
+        game.getBoard().printBoard(g);
     }
 }

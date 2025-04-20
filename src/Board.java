@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.util.ArrayList;
 
 public class Board
@@ -6,12 +7,18 @@ public class Board
 
     public Board(ArrayList<ArrayList<BoardTile>> board)
     {
-        this.board = board;
+        this.board = new ArrayList<>();
     }
 
-    public void printBoard()
+    public ArrayList<ArrayList<BoardTile>> getBoard()
+    {
+        return board;
+    }
+
+    public void printBoard(Graphics g)
     {
         //printBoardHelper();
+        g.drawRect(300,300,100,100);
     }
 
     public void printBoardHelper(BoardTile current)
