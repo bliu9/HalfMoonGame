@@ -10,15 +10,31 @@ public class Board
         this.board = new ArrayList<>();
     }
 
+    public Board()
+    {
+        this.board = new ArrayList<>();
+    }
+
     public ArrayList<ArrayList<BoardTile>> getBoard()
     {
         return board;
     }
 
-    public void printBoard(Graphics g)
+    public void setBoard(ArrayList<ArrayList<BoardTile>> newBoard)
+    {
+        this.board = newBoard;
+    }
+
+    public void draw(Graphics g)
     {
         //printBoardHelper();
-        g.drawRect(300,300,100,100);
+        for (ArrayList<BoardTile> b : board)
+        {
+            for (BoardTile bt : b)
+            {
+                bt.draw(g);
+            }
+        }
     }
 
     public void printBoardHelper(BoardTile current)

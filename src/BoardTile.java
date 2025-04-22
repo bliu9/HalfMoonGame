@@ -13,10 +13,12 @@ public class BoardTile
     private ArrayList<BoardTile> neighbors;
     private final int size = 100;
 
-    public BoardTile(boolean isWall,int row,int col,ArrayList<BoardTile> neighbors)
+    public BoardTile(boolean isWall,int row,int col,int x, int y,ArrayList<BoardTile> neighbors)
     {
         this.row = row;
         this.col = col;
+        this.x = x;
+        this.y = y;
         this.neighbors = neighbors;
 
         // If the tile is a wall, then set it to closed; if the tile is a space, set it to open
@@ -43,7 +45,8 @@ public class BoardTile
     // Draws the board tile
     public void draw(Graphics g)
     {
-
+        g.setColor(Color.RED);
+        g.drawRect(x,y,100,100);
     }
 
 

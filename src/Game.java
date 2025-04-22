@@ -24,6 +24,7 @@ public class Game implements MouseListener, MouseMotionListener
         this.moonTileClicked = false;
 
         moonTiles = new ArrayList<MoonTile>();
+        board = new Board();
         generateBoard();
         generateMoonTiles();
         humanPlayer = new Player(this);
@@ -34,6 +35,7 @@ public class Game implements MouseListener, MouseMotionListener
         window = new GameViewer(this);
         this.window.addMouseListener(this);
         this.window.addMouseMotionListener(this);
+        window.repaint();
     }
 
     public void generateMoonTiles()
@@ -46,12 +48,18 @@ public class Game implements MouseListener, MouseMotionListener
 
     public void generateBoard() {
         // Picking a random board
-        int boardType = (int) (Math.random() * NUMBER_OF_BOARDS);
-        board = new Board(new ArrayList<ArrayList<BoardTile>>());
+//        int boardType = (int) (Math.random() * NUMBER_OF_BOARDS);
+        int boardType =1;//FOR TESTING ONLY
 
         // Generating each board
         if (boardType == 1) {
             //code for generating one arrangement of the board
+            ArrayList<ArrayList<BoardTile>> board1 = new ArrayList<ArrayList<BoardTile>>();
+            ArrayList<BoardTile> a = new ArrayList<BoardTile>();
+            a.add(new BoardTile(false,-1,-1,300,300,null));
+            board1.add(a);
+            this.board.setBoard(board1);
+
         } else if (boardType == 2) {
             //code for generating second arrangement of the board
         } else if (boardType == 3) {
@@ -87,14 +95,15 @@ public class Game implements MouseListener, MouseMotionListener
                     System.out.println("clicked moontile");
                     clickedMoonTile = clicked;
                     moonTileClicked = true;
+                    return;
                 }
             }
             else if(moonTileClicked)
             {
-                System.out.println("clicked boardtile");
                 BoardTile clicked = getBoardTileClicked(e.getX(),e.getY());
                 if (clicked != null)
                 {
+                    System.out.println("clicked boardtile");
                     System.out.println(clickedMoonTile.getX()+""+clickedMoonTile.getY());
                     clickedMoonTile.setX(clicked.getX());
                     clickedMoonTile.setY(clicked.getY());
@@ -103,17 +112,16 @@ public class Game implements MouseListener, MouseMotionListener
                     clickedMoonTile = null;
                     System.out.println("swap code ran");
                     moonTileClicked = false;
+                    return;
                 }
             }
-            else
-            {
-                System.out.println("\nclicked non-clickable object");
-            }
+            System.out.println("\nclicked non-clickable object");
         }
         else
         {
             System.out.println("erm how da computer click???");
         }
+        window.repaint();
     }
 
     private BoardTile getBoardTileClicked(int x, int y)

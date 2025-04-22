@@ -40,7 +40,8 @@ public class GameViewer extends JFrame
         //Draw background
         g.drawImage(backgroundImage,0,0,WINDOW_WIDTH,WINDOW_HEIGHT,this);
         g.drawImage(topMoonImage,40,-250,500,500,this);
+
         game.getCurrentPlayer().draw(g);
-        game.getBoard().printBoard(g);
+        game.getBoard().draw(g);
     }
 }
