@@ -23,6 +23,7 @@ public class Player
         {
             hand.add(game.getMoonTiles().get((int)(Math.random()*8)));
         }
+        System.out.println(hand);
     }
 
     public ArrayList<MoonTile> getHand()
@@ -32,6 +33,9 @@ public class Player
 
     public void draw(Graphics g)
     {
-        hand.get(0).draw(g);
+        for (MoonTile mt : hand)
+        {
+            mt.draw(g);
+        }
     }
 }

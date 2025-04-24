@@ -3,16 +3,19 @@ import java.util.ArrayList;
 
 public class Board
 {
-    ArrayList<ArrayList<BoardTile>> board;
+    private ArrayList<ArrayList<BoardTile>> board;
+    private Game game;
 
-    public Board(ArrayList<ArrayList<BoardTile>> board)
+    public Board(ArrayList<ArrayList<BoardTile>> board,Game game)
     {
         this.board = new ArrayList<>();
+        this.game = game;
     }
 
-    public Board()
+    public Board(Game game)
     {
         this.board = new ArrayList<>();
+        this.game = game;
     }
 
     public ArrayList<ArrayList<BoardTile>> getBoard()
@@ -45,5 +48,8 @@ public class Board
         {
             printBoardHelper(neighbor);
         }
+    }
+
+    public void setNeighbors() {
     }
 }

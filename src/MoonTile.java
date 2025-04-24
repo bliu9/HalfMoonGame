@@ -10,11 +10,13 @@ public class MoonTile
     private int y;
     private final int size = 150;
     private int moonImage;
+    private Game game;
 
-    public MoonTile(String moonPhase, int moonImage)
+    public MoonTile(String moonPhase, int moonImage, Game game)
     {
         this.moonPhase = moonPhase;
         this.moonImage = moonImage;
+        this.game = game;
     }
 
     public MoonTile(String moonPhase,int row,int col)
@@ -28,6 +30,8 @@ public class MoonTile
     {
         g.setColor(Color.RED);
         g.drawRect(x,y,size,size);
+
+
     }
 
     // Getters

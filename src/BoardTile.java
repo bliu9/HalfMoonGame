@@ -12,14 +12,15 @@ public class BoardTile
     private int y;
     private ArrayList<BoardTile> neighbors;
     private final int size = 100;
+    private Game game;
 
-    public BoardTile(boolean isWall,int row,int col,int x, int y,ArrayList<BoardTile> neighbors)
+    public BoardTile(boolean isWall,int row,int col,int x, int y, Game game)
     {
         this.row = row;
         this.col = col;
         this.x = x;
         this.y = y;
-        this.neighbors = neighbors;
+        this.game = game;
 
         // If the tile is a wall, then set it to closed; if the tile is a space, set it to open
         this.isWall=isWall;

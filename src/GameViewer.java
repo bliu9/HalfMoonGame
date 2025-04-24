@@ -8,7 +8,8 @@ public class GameViewer extends JFrame
     private final int WINDOW_WIDTH = 600;
     private final int WINDOW_HEIGHT = 800;
     private final int TITLE_BAR_HEIGHT = 30;
-    private ArrayList<Image> moonTileImages;
+    private ArrayList<Image> playerMoonTileImages;
+    private ArrayList<Image> computerMoonTileImages;
     private Image backgroundImage;
     private Image topMoonImage;
 
@@ -20,10 +21,15 @@ public class GameViewer extends JFrame
         // Set up image resources
         this.topMoonImage = new ImageIcon("Resources/fullmoon.png").getImage();
         this.backgroundImage = new ImageIcon("Resources/background.jpg").getImage();
-        moonTileImages = new ArrayList<Image>();
-        for (int i=0; i<52; i++)
+        playerMoonTileImages = new ArrayList<>();
+        for (int i=0; i<8; i++)
         {
-            moonTileImages.add(new ImageIcon("Resources/"+i+".png").getImage());
+            playerMoonTileImages.add(new ImageIcon("Resources/p"+i+".png").getImage());
+        }
+        computerMoonTileImages = new ArrayList<>();
+        for (int i=0; i<8; i++)
+        {
+            computerMoonTileImages.add(new ImageIcon("Resources/c"+i+".png").getImage());
         }
 
         // Set up the window and set it to visible
@@ -43,5 +49,13 @@ public class GameViewer extends JFrame
 
         game.getCurrentPlayer().draw(g);
         game.getBoard().draw(g);
+    }
+
+    public ArrayList<Image> getComputerMoonTileImages() {
+        return computerMoonTileImages;
+    }
+
+    public ArrayList<Image> getPlayerMoonTileImages() {
+        return playerMoonTileImages;
     }
 }
