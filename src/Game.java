@@ -194,4 +194,21 @@ public class Game implements MouseListener, MouseMotionListener
     {
         return board;
     }
+
+    public GameViewer getWindow()
+    {
+        return window;
+    }
+
+    public boolean isHumanPlayerTurn() {
+        return isHumanPlayerTurn;
+    }
+
+    public Player getComputerPlayer() {
+        return computerPlayer;
+    }
+
+    public Player getHumanPlayer() {
+        return humanPlayer;
+    }
 }

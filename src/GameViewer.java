@@ -5,8 +5,10 @@ import java.util.ArrayList;
 public class GameViewer extends JFrame
 {
     private Game game;
-    private final int WINDOW_WIDTH = 600;
-    private final int WINDOW_HEIGHT = 800;
+    public static final int WINDOW_WIDTH = 600;
+    public static final int WINDOW_HEIGHT = 800;
+    public static final int HAND_TILE_GAP = 25;
+    public static final int HAND_Y_COORD = 600;
     private final int TITLE_BAR_HEIGHT = 30;
     private ArrayList<Image> playerMoonTileImages;
     private ArrayList<Image> computerMoonTileImages;
@@ -46,6 +48,8 @@ public class GameViewer extends JFrame
         //Draw background
         g.drawImage(backgroundImage,0,0,WINDOW_WIDTH,WINDOW_HEIGHT,this);
         g.drawImage(topMoonImage,40,-250,500,500,this);
+
+        game.getCurrentPlayer().setHandCoordinates();
 
         game.getCurrentPlayer().draw(g);
         game.getBoard().draw(g);

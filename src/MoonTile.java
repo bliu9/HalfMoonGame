@@ -8,7 +8,7 @@ public class MoonTile
     private int col;
     private int x;
     private int y;
-    private final int size = 150;
+    private final int size = 100;
     private int moonImage;
     private Game game;
 

@@ -38,4 +38,16 @@ public class Player
             mt.draw(g);
         }
     }
+
+    public void setHandCoordinates()
+    {
+        int handLen = (hand.get(0).getSize() + GameViewer.HAND_TILE_GAP) * hand.size();
+        int sideSpace = (GameViewer.WINDOW_WIDTH-handLen)/2;
+
+        for (int i = 0; i < hand.size(); i++)
+        {
+            hand.get(i).setX(sideSpace+(i*(hand.get(0).getSize()+GameViewer.HAND_TILE_GAP)));
+            hand.get(i).setY(GameViewer.HAND_Y_COORD);
+        }
+    }
 }
