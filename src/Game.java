@@ -31,11 +31,9 @@ public class Game implements MouseListener, MouseMotionListener
         computerPlayer = new Player(this);
         currentPlayer = humanPlayer;
 
-
         window = new GameViewer(this);
         this.window.addMouseListener(this);
         this.window.addMouseMotionListener(this);
-        window.repaint();
     }
 
     public void generateMoonTiles()
@@ -111,6 +109,7 @@ public class Game implements MouseListener, MouseMotionListener
                     System.out.println(clickedMoonTile.getX()+""+clickedMoonTile.getY());
                     clickedMoonTile.setX(clickedBT.getX());
                     clickedMoonTile.setY(clickedBT.getY());
+                    currentPlayer.getHand().remove(clickedMoonTile);
                     window.repaint();
                     System.out.println(clickedMoonTile.getX()+""+clickedMoonTile.getY());
                     clickedMoonTile = null;
@@ -147,8 +146,10 @@ public class Game implements MouseListener, MouseMotionListener
     private MoonTile getMoonTileClicked(int x, int y)
     {
         MoonTile noTileClicked = null;
+        System.out.println(currentPlayer.getHand().size());
         for (MoonTile m : currentPlayer.getHand())
         {
+            System.out.println(m);
             if (m.getX()<=x && x<=m.getX()+m.getSize() && m.getY()<=y && y<=m.getY()+m.getSize())
             {
                 return m;
