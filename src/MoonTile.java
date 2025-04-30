@@ -8,7 +8,7 @@ public class MoonTile
     private int col;
     private int x;
     private int y;
-    private final int size = 100;
+    private static final int size = 100;
     private int moonImage;
     private Game game;
 
@@ -17,6 +17,18 @@ public class MoonTile
         this.moonPhase = moonPhase;
         this.moonImage = moonImage;
         this.game = game;
+    }
+
+    public MoonTile(MoonTile toCopy)
+    {
+        this.playerPossession = toCopy.playerPossession;
+        this.moonPhase = toCopy.moonPhase;
+        this.row = toCopy.row;
+        this.col = toCopy.col;
+        this.x = toCopy.x;
+        this.y = toCopy.y;
+        this.moonImage = toCopy.moonImage;
+        this.game = toCopy.game;
     }
 
     public MoonTile(String moonPhase,int row,int col)
@@ -28,10 +40,7 @@ public class MoonTile
 
     public void draw(Graphics g)
     {
-        g.setColor(Color.RED);
-        g.drawRect(x,y,size,size);
-
-
+        g.drawImage(game.getWindow().getPlayerMoonTileImages().get(moonImage),x,y,size,size,game.getWindow());
     }
 
     // Getters

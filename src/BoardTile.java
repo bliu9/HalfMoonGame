@@ -11,7 +11,7 @@ public class BoardTile
     private int x;
     private int y;
     private ArrayList<BoardTile> neighbors;
-    private final int size = 100;
+    private static final int size = 104;
     private Game game;
 
     public BoardTile(boolean isWall,int row,int col,int x, int y, Game game)
@@ -40,14 +40,20 @@ public class BoardTile
         this.playedTile=playedTile;
         playedTile.setRow(row);
         playedTile.setCol(col);
+        playedTile.setX(x+((size-playedTile.getSize())/2));
+        playedTile.setY(y+((size-playedTile.getSize())/2));
         this.isOpen = false;
     }
 
-    // Draws the board tile
+    // Draws the board tile and a moon tile that is played into it
     public void draw(Graphics g)
     {
         g.setColor(Color.RED);
-        g.drawRect(x,y,100,100);
+        g.drawRect(x,y,size,size);
+        if (playedTile != null)
+        {
+            playedTile.draw(g);
+        }
     }
 
 

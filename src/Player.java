@@ -50,11 +50,6 @@ public class Player
         {
             hand.get(i).setX(sideSpace+(GameViewer.HAND_TILE_GAP/2)+(i*(hand.get(0).getSize()+GameViewer.HAND_TILE_GAP)));
             hand.get(i).setY(GameViewer.HAND_Y_COORD);
-
-            System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-            System.out.println(sideSpace+(GameViewer.HAND_TILE_GAP/2)+(i*(hand.get(0).getSize()+GameViewer.HAND_TILE_GAP)));
-            System.out.println(GameViewer.HAND_Y_COORD);
-            System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         }
     }
 }

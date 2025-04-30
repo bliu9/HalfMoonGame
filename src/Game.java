@@ -103,18 +103,23 @@ public class Game implements MouseListener, MouseMotionListener
                 // Check to see if a boardTile was clicked
                 // If so, move clicked moonTile to the boardTile and update moonTileClicked to false
                 BoardTile clickedBT = getBoardTileClicked(e.getX(),e.getY());
-                if (clickedBT != null && !clickedBT.isWall())
+                if (clickedBT != null && !clickedBT.isWall() && clickedBT.isOpen())
                 {
                     System.out.println("clicked boardtile");
-                    System.out.println(clickedMoonTile.getX()+""+clickedMoonTile.getY());
+                    // Update the MT x and y position to the corresponding value on the boardtile
                     clickedMoonTile.setX(clickedBT.getX());
                     clickedMoonTile.setY(clickedBT.getY());
-                    currentPlayer.getHand().remove(clickedMoonTile);
-                    window.repaint();
-                    System.out.println(clickedMoonTile.getX()+""+clickedMoonTile.getY());
+
+                    // Remove the MT from hand and move it to the board
+                    MoonTile temp = new MoonTile(currentPlayer.getHand().remove(currentPlayer.getHand().indexOf(clickedMoonTile)));
+                    clickedBT.playTile(temp);
+
+                    // Reset the variables for swapping
                     clickedMoonTile = null;
-                    System.out.println("swap code ran");
                     moonTileClicked = false;
+                    window.repaint();
+                    System.out.print(temp);
+                    System.out.println("swap code ran");
                     return;
                 }
             }
