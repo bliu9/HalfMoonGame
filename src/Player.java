@@ -52,4 +52,29 @@ public class Player
             hand.get(i).setY(GameViewer.HAND_Y_COORD);
         }
     }
+
+    public boolean isWinner()
+    {
+        return isWinner;
+    }
+
+    public int getPoints()
+    {
+        return points;
+    }
+
+    public void addPoints()
+    {
+        points++;
+    }
+
+    public void addPoints(int add)
+    {
+        this.points += add;
+    }
+
+    public void setWinner(boolean winner)
+    {
+        this.isWinner = winner;
+    }
 }

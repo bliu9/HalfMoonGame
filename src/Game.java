@@ -11,6 +11,7 @@ public class Game implements MouseListener, MouseMotionListener
     public static final int BOARD_SIDEX_SPACE = 81;
     public static final int BOARD_TOPY_SPACE = 215;
     public static final int BOARDTILE_SPACE = 5;
+    private boolean isGameOver;
     private Board board;
     boolean moonTileClicked;
     private MoonTile clickedMoonTile;
@@ -40,21 +41,84 @@ public class Game implements MouseListener, MouseMotionListener
         humanPlayer = new Player(this);
         computerPlayer = new Player(this);
         currentPlayer = humanPlayer;
+        isGameOver = false;
 
         window = new GameViewer(this);
         this.window.addMouseListener(this);
         this.window.addMouseMotionListener(this);
 
-        for (ArrayList<BoardTile> b : board.getBoard())
+        // Start the gameplay loop
+        playGame();
+    }
+
+    private void playGame()
+    {
+        // While the game isn't over
+        while (!isGameOver)
         {
-            for (BoardTile bt : b)
+
+
+
+            // Update isGameOver if all board tiles are filled
+            checkGameOver();
+        }
+
+        // Once the game has ended
+        applyPossessionPoints();
+
+        // Set who the winner is and display win screen
+        if (humanPlayer.getPoints()>computerPlayer.getPoints())
+        {
+            humanPlayer.setWinner(true);
+        }
+        else if (humanPlayer.getPoints()<computerPlayer.getPoints())
+        {
+            computerPlayer.setWinner(true);
+        }
+        //draw win screen
+            //if both players have their iswinner == false, it was a tie
+
+    }
+
+    private void applyPossessionPoints()
+    {
+        // iterates through board to add one point for each tile a player has possession over
+        for (ArrayList<BoardTile> b:board.getBoard())
+        {
+            for (BoardTile bt: b)
             {
                 if (!bt.isWall())
                 {
-                    System.out.println(bt.getX()+","+bt.getY()+"\n");
+                    if (bt.getPlayedTile().getPlayerPossession().equals(humanPlayer))
+                    {
+                        humanPlayer.addPoints();
+                    }
+                    else
+                    {
+                        computerPlayer.addPoints();
+                    }
                 }
             }
         }
+    }
+
+    public void checkGameOver()
+    {
+        // iterates through board to check if all the tiles are filled
+        for (ArrayList<BoardTile> b:board.getBoard())
+        {
+            for (BoardTile bt: b)
+            {
+                if (!bt.isWall()&&bt.isOpen())
+                {
+                    isGameOver = false;
+                    return;
+                }
+            }
+        }
+
+        // Set the game to be over
+        isGameOver = true;
     }
 
     public void generateMoonTiles()

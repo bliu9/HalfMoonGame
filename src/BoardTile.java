@@ -92,6 +92,7 @@ public class BoardTile
     public void setWall(boolean isWall)
     {
         this.isWall = isWall;
+        this.isOpen= !this.isWall;
     }
 
     public void setDrawn(boolean isDrawn)
