@@ -8,7 +8,7 @@ public class GameViewer extends JFrame
     public static final int WINDOW_WIDTH = 600;
     public static final int WINDOW_HEIGHT = 800;
     public static final int HAND_TILE_GAP = 25;
-    public static final int HAND_Y_COORD = 600;
+    public static final int HAND_Y_COORD = 685;
     private final int TITLE_BAR_HEIGHT = 30;
     private ArrayList<Image> playerMoonTileImages;
     private ArrayList<Image> computerMoonTileImages;
@@ -50,10 +50,10 @@ public class GameViewer extends JFrame
         g.drawImage(topMoonImage,40,-250,500,500,this);
 
         game.getCurrentPlayer().setHandCoordinates();
-        for (int i=0;i<game.getCurrentPlayer().getHand().size();i++)
-        {
-            System.out.println(game.getCurrentPlayer().getHand().get(i));
-        }
+//        for (int i=0;i<game.getCurrentPlayer().getHand().size();i++)
+//        {
+//            System.out.println(game.getCurrentPlayer().getHand().get(i));
+//        }
 
         game.getCurrentPlayer().draw(g);
         game.getBoard().draw(g);

@@ -30,26 +30,46 @@ public class Board
 
     public void draw(Graphics g)
     {
-        //printBoardHelper();
+        // Draw each tile in the board
         for (ArrayList<BoardTile> b : board)
         {
             for (BoardTile bt : b)
             {
-                bt.draw(g);
+                printBoardHelper(bt,g,bt.getX(),bt.getY());
+            }
+        }
+
+        // After board is fully drawn, go through each tile and reset the isDrawn variables back to false for the next
+        //time the board is drawn
+        for (ArrayList<BoardTile> b : board)
+        {
+            for (BoardTile bt : b)
+            {
+                bt.setDrawn(false);
             }
         }
     }
 
-    public void printBoardHelper(BoardTile current)
+    public void printBoardHelper(BoardTile current, Graphics g, int prevX, int prevY)
     {
-        //current.draw();
+        // If the current tile has not been drawn and isn't a wall, draw it with the adjacent connector
+        if (!current.isDrawn() && !current.isWall())
+        {
+            // Default board tile color
+            g.setColor(Color.darkGray);
+
+            // Call draw method for board tile and update isDrawn
+            current.draw(g);
+            current.setDrawn(true);
+
+            // Draw connector line
+            g.drawLine(prevX,prevY, current.getX(), current.getY());
+        }
+
         // for each thing in the neighbors of the board tile, call the print board helper on it
         for (BoardTile neighbor : current.getNeighbors())
         {
-            printBoardHelper(neighbor);
+            printBoardHelper(neighbor,g,current.getX(),current.getY());
         }
-    }
-
-    public void setNeighbors() {
     }
 }

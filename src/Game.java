@@ -1,10 +1,16 @@
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Game implements MouseListener, MouseMotionListener
 {
+    public static final int BOARD_SIDEX_SPACE = 81;
+    public static final int BOARD_TOPY_SPACE = 215;
+    public static final int BOARDTILE_SPACE = 5;
     private Board board;
     boolean moonTileClicked;
     private MoonTile clickedMoonTile;
@@ -12,7 +18,11 @@ public class Game implements MouseListener, MouseMotionListener
     private Player computerPlayer;
     private boolean isHumanPlayerTurn;
     private Player currentPlayer;
-    private final int NUMBER_OF_BOARDS = 3;
+    private static final int NUMBER_OF_BOARDS = 3;
+    private static final int cols = 5;
+    private static final int rows = 4;
+    private int numRows;
+    private int numCols;
     private GameViewer window;
     private ArrayList<MoonTile> moonTiles;
     private String[] moonPhases = {"empty","left sliver","left half","left most",
@@ -34,6 +44,17 @@ public class Game implements MouseListener, MouseMotionListener
         window = new GameViewer(this);
         this.window.addMouseListener(this);
         this.window.addMouseMotionListener(this);
+
+        for (ArrayList<BoardTile> b : board.getBoard())
+        {
+            for (BoardTile bt : b)
+            {
+                if (!bt.isWall())
+                {
+                    System.out.println(bt.getX()+","+bt.getY()+"\n");
+                }
+            }
+        }
     }
 
     public void generateMoonTiles()
@@ -44,40 +65,145 @@ public class Game implements MouseListener, MouseMotionListener
         }
     }
 
+    // FillBoard function courtesy of MazeSolver
+    public void fillBoard(String filename)
+    {
+        // Create the arraylist to update board
+        ArrayList<ArrayList<BoardTile>> tempBoard = new ArrayList<ArrayList<BoardTile>>();
+        for (int i=0; i<numRows;i++)
+        {
+            ArrayList<BoardTile> row = new ArrayList<>();
+            for (int j=0;j<numCols;j++)
+            {
+                row.add(null);
+            }
+            tempBoard.add(row);
+        }
+
+        try {
+            File myObj = new File(filename);
+            Scanner myReader = new Scanner(myObj);
+
+            // The row and col are specified in the first line of the file
+            this.numRows = myReader.nextInt();
+            this.numCols = myReader.nextInt();
+            myReader.nextLine();
+
+            // Fill temp board with dummy values that will be swapped later
+            for (int i=0; i<numRows;i++)
+            {
+                ArrayList<BoardTile> row = new ArrayList<>();
+                for (int j=0;j<numCols;j++)
+                {
+                    row.add(null);
+                }
+                tempBoard.add(row);
+            }
+
+            int x = 0;
+            int y = 0;
+            for (int row=0; row<this.numRows; row++) {
+                y = BOARD_TOPY_SPACE + row*(BoardTile.getSize()+BOARDTILE_SPACE);
+                String line = myReader.nextLine();
+
+                for (int col=0; col<this.numCols; col++) {
+                    x = BOARD_SIDEX_SPACE + col*(BoardTile.getSize()+BOARDTILE_SPACE);
+
+                    // Create a new MazeCell for each location
+                    tempBoard.get(row).set(col,new BoardTile(row,col,x,y,this));
+
+                    // Set if it is a wall
+                    if (line.charAt(col) == '#') {
+                        tempBoard.get(row).get(col).setWall(true);
+                    }
+                    else
+                    {
+                        tempBoard.get(row).get(col).setWall(false);
+                    }
+                }
+            }
+            myReader.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+
+        setNeighbors();
+        board.setBoard(tempBoard);
+    }
+
+    public void setNeighbors()
+    {
+        for (int i=0;i<board.getBoard().size();i++)
+        {
+            for (int j=0;j<board.getBoard().get(i).size();j++)
+            {
+                BoardTile currentTile = board.getBoard().get(i).get(j);
+                setNeighborsRing(currentTile);
+            }
+        }
+    }
+
+    public boolean setNeighborsRing(BoardTile currentTile)
+    {
+        boolean didSetNeighbors = false;
+
+        //Checks tiles in a ring around the current tile
+        int[] rowChecks = {-1,-1,-1,0,0,1,1,1};
+        int[] colChecks = {-1,0,1,-1,1,-1,0,1};
+        //Iterates through the loop for as many times as there are tiles around a center tile (8)
+        for (int i=0;i<8;i++)
+        {
+            //Sets the row and col index to check
+            int row = currentTile.getRow() + rowChecks[i];
+            int col = currentTile.getCol() + colChecks[i];
+
+            //If the tile that we want to get is not outside the board, and it is not a wall
+            if (row >=0 && row<board.getBoard().size() && col>=0 && col<board.getBoard().get(0).size() && !board.getBoard().get(row).get(col).isWall())
+            {
+                currentTile.getNeighbors().add(board.getBoard().get(row).get(col));
+                didSetNeighbors=true;
+            }
+        }
+
+        return didSetNeighbors;
+    }
+
     public void generateBoard() {
         // Picking a random board
 //        int boardType = (int) (Math.random() * NUMBER_OF_BOARDS);
         int boardType =1;//FOR TESTING ONLY
 
-        // Generating each board
-        if (boardType == 1) {
-            //code for generating one arrangement of the board
-            ArrayList<ArrayList<BoardTile>> board1 = new ArrayList<ArrayList<BoardTile>>();
-            ArrayList<BoardTile> a = new ArrayList<BoardTile>();
-            a.add(new BoardTile(false,-1,-1,300,300,this));
-            board1.add(a);
-            this.board.setBoard(board1);
-            board.setNeighbors();
+        fillBoard("Board"+boardType);
 
-        } else if (boardType == 2) {
-            //code for generating second arrangement of the board
-        } else if (boardType == 3) {
-            //code for generating third arrangement of the board
-        }
-        else {
-            // Debugging
-            System.out.println("error making board");
-        }
+        // Generating each board
+//        if (boardType == 1) {
+//            //code for generating one arrangement of the board
+//            ArrayList<ArrayList<BoardTile>> board1 = new ArrayList<ArrayList<BoardTile>>();
+//            ArrayList<BoardTile> a = new ArrayList<BoardTile>();
+//            a.add(new BoardTile(false,-1,-1,300,300,this));
+//            board1.add(a);
+//            this.board.setBoard(board1);
+//
+//        } else if (boardType == 2) {
+//            //code for generating second arrangement of the board
+//        } else if (boardType == 3) {
+//            //code for generating third arrangement of the board
+//        }
+//        else {
+//            // Debugging
+//            System.out.println("error making board");
+//        }
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
-        System.out.println("pressed");
+//        System.out.println("pressed");
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        System.out.println("released");
+//        System.out.println("released");
     }
 
     @Override
@@ -118,7 +244,7 @@ public class Game implements MouseListener, MouseMotionListener
                     clickedMoonTile = null;
                     moonTileClicked = false;
                     window.repaint();
-                    System.out.print(temp);
+//                    System.out.print(temp);
                     System.out.println("swap code ran");
                     return;
                 }
@@ -151,10 +277,10 @@ public class Game implements MouseListener, MouseMotionListener
     private MoonTile getMoonTileClicked(int x, int y)
     {
         MoonTile noTileClicked = null;
-        System.out.println(currentPlayer.getHand().size());
+//        System.out.println(currentPlayer.getHand().size());
         for (MoonTile m : currentPlayer.getHand())
         {
-            System.out.println(m);
+//            System.out.println(m);
             if (m.getX()<=x && x<=m.getX()+m.getSize() && m.getY()<=y && y<=m.getY()+m.getSize())
             {
                 return m;
@@ -165,17 +291,17 @@ public class Game implements MouseListener, MouseMotionListener
 
     @Override
     public void mouseEntered(MouseEvent e) {
-        System.out.println("enter");
+//        System.out.println("enter");
         }
 
     @Override
     public void mouseExited(MouseEvent e) {
-        System.out.println("exit");
+//        System.out.println("exit");
     }
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        System.out.println("dragging");
+//        System.out.println("dragging");
     }
 
     @Override

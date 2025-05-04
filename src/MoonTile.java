@@ -79,6 +79,12 @@ public class MoonTile
         this.y=y;
     }
 
+
+    public void setPlayerPossession(Player player)
+    {
+        this.playerPossession = player;
+    }
+
     // Getters
     public int getSize()
     {
