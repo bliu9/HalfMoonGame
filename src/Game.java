@@ -56,6 +56,7 @@ public class Game implements MouseListener, MouseMotionListener
         // While the game isn't over
         while (!isGameOver)
         {
+            doCurrentPlayerTurn();
 
 
 
@@ -63,7 +64,7 @@ public class Game implements MouseListener, MouseMotionListener
             checkGameOver();
         }
 
-        // Once the game has ended
+        // Apply points to players for possession
         applyPossessionPoints();
 
         // Set who the winner is and display win screen
@@ -78,6 +79,27 @@ public class Game implements MouseListener, MouseMotionListener
         //draw win screen
             //if both players have their iswinner == false, it was a tie
 
+    }
+
+    private void doCurrentPlayerTurn()
+    {
+        if (currentPlayer.equals(humanPlayer))
+        {
+            //draw the "play a moon tile" prompt on the moon
+            //set game state to human player turn (make this allow the detection code to run)
+            //add a check moon cycle function call once the player places a tile
+            //add a tile to the hand of the current player
+            //update current player to computer player
+        }
+        else if(currentPlayer.equals(computerPlayer))
+        {
+            //draw a "computer's turn"
+            //set game state to computer player turn
+            //play a random moon tile from computer hand onto a random open board tile
+            //call check moon cycle on that played tile
+            //add a tile to the hand of the current player
+            //update current player to human player
+        }
     }
 
     private void applyPossessionPoints()
@@ -239,25 +261,6 @@ public class Game implements MouseListener, MouseMotionListener
         int boardType =1;//FOR TESTING ONLY
 
         fillBoard("Board"+boardType);
-
-        // Generating each board
-//        if (boardType == 1) {
-//            //code for generating one arrangement of the board
-//            ArrayList<ArrayList<BoardTile>> board1 = new ArrayList<ArrayList<BoardTile>>();
-//            ArrayList<BoardTile> a = new ArrayList<BoardTile>();
-//            a.add(new BoardTile(false,-1,-1,300,300,this));
-//            board1.add(a);
-//            this.board.setBoard(board1);
-//
-//        } else if (boardType == 2) {
-//            //code for generating second arrangement of the board
-//        } else if (boardType == 3) {
-//            //code for generating third arrangement of the board
-//        }
-//        else {
-//            // Debugging
-//            System.out.println("error making board");
-//        }
     }
 
     @Override
@@ -288,7 +291,7 @@ public class Game implements MouseListener, MouseMotionListener
                 return;
             }
             // If a moonTile has already been clicked
-            if(moonTileClicked)
+            if (moonTileClicked)
             {
                 // Check to see if a boardTile was clicked
                 // If so, move clicked moonTile to the boardTile and update moonTileClicked to false
@@ -303,6 +306,9 @@ public class Game implements MouseListener, MouseMotionListener
                     // Remove the MT from hand and move it to the board
                     MoonTile temp = new MoonTile(currentPlayer.getHand().remove(currentPlayer.getHand().indexOf(clickedMoonTile)));
                     clickedBT.playTile(temp);
+
+                    // Call function to check for any combos that the player got
+                    checkMoonCycles(clickedMoonTile);
 
                     // Reset the variables for swapping
                     clickedMoonTile = null;
@@ -320,6 +326,11 @@ public class Game implements MouseListener, MouseMotionListener
             System.out.println("erm how da computer click???");
         }
         window.repaint();
+    }
+
+    private void checkMoonCycles(MoonTile clickedMoonTile)
+    {
+
     }
 
     private BoardTile getBoardTileClicked(int x, int y)
