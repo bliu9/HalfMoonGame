@@ -4,6 +4,7 @@ public class MoonTile
 {
     private Player playerPossession;
     private String moonPhase;
+    private BoardTile placed;
     private int row;
     private int col;
     private int x;
@@ -85,6 +86,11 @@ public class MoonTile
         this.playerPossession = player;
     }
 
+    public void setPlaced(BoardTile placed)
+    {
+        this.placed = placed;
+    }
+
     // Getters
     public int getSize()
     {
@@ -99,5 +105,10 @@ public class MoonTile
     public int getY()
     {
         return y;
+    }
+
+    public BoardTile getPlaced()
+    {
+        return placed;
     }
 }

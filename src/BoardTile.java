@@ -54,6 +54,8 @@ public class BoardTile
 
         playedTile.setPlayerPossession(game.getCurrentPlayer());
 
+        playedTile.setPlaced(this);
+
         this.isOpen = false;
     }
 

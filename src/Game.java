@@ -11,6 +11,9 @@ public class Game implements MouseListener, MouseMotionListener
     public static final int BOARD_SIDEX_SPACE = 81;
     public static final int BOARD_TOPY_SPACE = 215;
     public static final int BOARDTILE_SPACE = 5;
+    private static final int CYCLE_BONUS_MULT = 2;
+    private static final int MIN_TILES_FOR_CYCLE_BONUS = 3;
+    private static final int PTS_FOR_PAIR = 2;
     private boolean isGameOver;
     private Board board;
     boolean moonTileClicked;
@@ -26,8 +29,9 @@ public class Game implements MouseListener, MouseMotionListener
     private int numCols;
     private GameViewer window;
     private ArrayList<MoonTile> moonTiles;
-    private String[] moonPhases = {"empty","left sliver","left half","left most",
+    private static final String[] moonPhases = {"empty","left sliver","left half","left most",
             "full","right most","right half","right sliver"};
+    private static final int[] moonPhaseFillValues = {0,1,2,3,4,3,2,1};
 
 
     public Game()
@@ -307,8 +311,11 @@ public class Game implements MouseListener, MouseMotionListener
                     MoonTile temp = new MoonTile(currentPlayer.getHand().remove(currentPlayer.getHand().indexOf(clickedMoonTile)));
                     clickedBT.playTile(temp);
 
+                    //NEED TO MAKE THESE UPDATE POSSESSION FOR SUCCESSFUL COMBO
                     // Call function to check for any combos that the player got
-                    checkMoonCycles(clickedMoonTile);
+                    checkMoonCycles(temp);
+                    // Call function to check for pairs the player got
+                    checkMoonPairs(temp);
 
                     // Reset the variables for swapping
                     clickedMoonTile = null;
@@ -328,9 +335,67 @@ public class Game implements MouseListener, MouseMotionListener
         window.repaint();
     }
 
-    private void checkMoonCycles(MoonTile clickedMoonTile)
+    public void checkMoonPairs(MoonTile clickedMoonTile)
     {
+        for (BoardTile neighbor : clickedMoonTile.getPlaced().getNeighbors())
+        {
+            if (!neighbor.isOpen())
+            {
+                if (moonPhaseFillValues[findIndex(moonPhases, clickedMoonTile.getMoonPhase())] +
+                        moonPhaseFillValues[findIndex(moonPhases, neighbor.getPlayedTile().getMoonPhase())] == 4
+                        && !getFirstWord(clickedMoonTile.getMoonPhase()).equals(getFirstWord(neighbor.getPlayedTile().getMoonPhase()))) {
+                    currentPlayer.addPoints(PTS_FOR_PAIR);
+                }
+            }
+        }
+    }
 
+    public String getFirstWord(String str)
+    {
+        if (str == null || str.isEmpty()) {
+            return "";
+        }
+        String[] words = str.trim().split(" ");
+        return words[0];
+    }
+
+    public void checkMoonCycles(MoonTile clickedMoonTile)
+    {
+        int numTiles = checkMoonCyclesHelper(clickedMoonTile,0);
+        if (numTiles>=MIN_TILES_FOR_CYCLE_BONUS)
+        {
+            currentPlayer.addPoints(numTiles*CYCLE_BONUS_MULT);
+        }
+    }
+
+    public int checkMoonCyclesHelper(MoonTile search,int cycleCount)
+    {
+        int phaseIndex = findIndex(moonPhases,search.getMoonPhase());
+
+        // Iterate through all the board tile's neighbors and if they are valid, call the function recursively to check them
+        for (BoardTile neighbor : search.getPlaced().getNeighbors())
+        {
+            if (!neighbor.isOpen() && (neighbor.getPlayedTile().getMoonPhase().equals(moonPhases[phaseIndex-1]) ||
+                    neighbor.getPlayedTile().getMoonPhase().equals(moonPhases[phaseIndex+1])))
+            {
+                return checkMoonCyclesHelper(neighbor.getPlayedTile(),++cycleCount);
+            }
+        }
+
+        // Base case: there are no valid neighbors left to check
+        return cycleCount;
+    }
+
+    public int findIndex(String[] arr,String str)
+    {
+        for (int i =0; i<arr.length;i++)
+        {
+            if (arr[i].equals(str))
+            {
+                return i;
+            }
+        }
+        return -1;
     }
 
     private BoardTile getBoardTileClicked(int x, int y)
