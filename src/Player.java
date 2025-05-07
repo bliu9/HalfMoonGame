@@ -9,10 +9,12 @@ public class Player
     private boolean isWinner;
     private int sizeOfHand = 4;
     private Game game;
+    private boolean isHumanPlayer;
 
-    public Player(Game game)
+    public Player(Game game, boolean isHumanPlayer)
     {
         this.game = game;
+        this.isHumanPlayer = isHumanPlayer;
         hand = new ArrayList<MoonTile>();
         generateHand();
     }
@@ -35,10 +37,17 @@ public class Player
 
     public void draw(Graphics g)
     {
-        for (MoonTile mt : hand)
+        if (isHumanPlayer)
         {
-            mt.draw(g);
+            // Draw hand
+            setHandCoordinates();
+            for (MoonTile mt : hand)
+            {
+                mt.draw(g);
+            }
         }
+
+        // Draw player points
     }
 
     public void setHandCoordinates()

@@ -52,8 +52,6 @@ public class BoardTile
         playedTile.setX(x+((size-playedTile.getSize())/2));
         playedTile.setY(y+((size-playedTile.getSize())/2));
 
-        playedTile.setPlayerPossession(game.getCurrentPlayer());
-
         playedTile.setPlaced(this);
 
         this.isOpen = false;
@@ -69,7 +67,7 @@ public class BoardTile
         g.setColor(Color.darkGray);
 
         // If there is a moon tile played, update the board tile color to the possession color
-        if (playedTile != null)
+        if (playedTile != null && playedTile.getPlayerPossession() != null)
         {
             if (playedTile.getPlayerPossession().equals(game.getHumanPlayer()))
             {

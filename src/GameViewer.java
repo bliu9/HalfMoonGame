@@ -49,13 +49,9 @@ public class GameViewer extends JFrame
         g.drawImage(backgroundImage,0,0,WINDOW_WIDTH,WINDOW_HEIGHT,this);
         g.drawImage(topMoonImage,40,-250,500,500,this);
 
-        game.getCurrentPlayer().setHandCoordinates();
-//        for (int i=0;i<game.getCurrentPlayer().getHand().size();i++)
-//        {
-//            System.out.println(game.getCurrentPlayer().getHand().get(i));
-//        }
-
-        game.getCurrentPlayer().draw(g);
+        // Draw human player, computer player, and board
+        game.getHumanPlayer().draw(g);
+        game.getComputerPlayer().draw(g);
         game.getBoard().draw(g);
     }
 

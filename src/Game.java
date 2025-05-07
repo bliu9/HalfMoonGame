@@ -3,11 +3,11 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Game implements MouseListener, MouseMotionListener
-{
+public class Game implements MouseListener, MouseMotionListener {
     public static final int BOARD_SIDEX_SPACE = 81;
     public static final int BOARD_TOPY_SPACE = 215;
     public static final int BOARDTILE_SPACE = 5;
@@ -29,21 +29,20 @@ public class Game implements MouseListener, MouseMotionListener
     private int numCols;
     private GameViewer window;
     private ArrayList<MoonTile> moonTiles;
-    private static final String[] moonPhases = {"empty","left sliver","left half","left most",
-            "full","right most","right half","right sliver"};
-    private static final int[] moonPhaseFillValues = {0,1,2,3,4,3,2,1};
+    private static final String[] moonPhases = {"empty", "left sliver", "left half", "left most",
+            "full", "right most", "right half", "right sliver"};
+    private static final int[] moonPhaseFillValues = {0, 1, 2, 3, 4, 3, 2, 1};
 
 
-    public Game()
-    {
+    public Game() {
         this.moonTileClicked = false;
 
         moonTiles = new ArrayList<MoonTile>();
         board = new Board(this);
         generateBoard();
         generateMoonTiles();
-        humanPlayer = new Player(this);
-        computerPlayer = new Player(this);
+        humanPlayer = new Player(this, true);
+        computerPlayer = new Player(this, false);
         currentPlayer = humanPlayer;
         isGameOver = false;
 
@@ -55,13 +54,10 @@ public class Game implements MouseListener, MouseMotionListener
         playGame();
     }
 
-    private void playGame()
-    {
+    private void playGame() {
         // While the game isn't over
-        while (!isGameOver)
-        {
+        while (!isGameOver) {
             doCurrentPlayerTurn();
-
 
 
             // Update isGameOver if all board tiles are filled
@@ -72,31 +68,24 @@ public class Game implements MouseListener, MouseMotionListener
         applyPossessionPoints();
 
         // Set who the winner is and display win screen
-        if (humanPlayer.getPoints()>computerPlayer.getPoints())
-        {
+        if (humanPlayer.getPoints() > computerPlayer.getPoints()) {
             humanPlayer.setWinner(true);
-        }
-        else if (humanPlayer.getPoints()<computerPlayer.getPoints())
-        {
+        } else if (humanPlayer.getPoints() < computerPlayer.getPoints()) {
             computerPlayer.setWinner(true);
         }
         //draw win screen
-            //if both players have their iswinner == false, it was a tie
+        //if both players have their iswinner == false, it was a tie
 
     }
 
-    private void doCurrentPlayerTurn()
-    {
-        if (currentPlayer.equals(humanPlayer))
-        {
+    private void doCurrentPlayerTurn() {
+        if (currentPlayer.equals(humanPlayer)) {
             //draw the "play a moon tile" prompt on the moon
             //set game state to human player turn (make this allow the detection code to run)
             //add a check moon cycle function call once the player places a tile
             //add a tile to the hand of the current player
             //update current player to computer player
-        }
-        else if(currentPlayer.equals(computerPlayer))
-        {
+        } else if (currentPlayer.equals(computerPlayer)) {
             //draw a "computer's turn"
             //set game state to computer player turn
             //play a random moon tile from computer hand onto a random open board tile
@@ -106,21 +95,14 @@ public class Game implements MouseListener, MouseMotionListener
         }
     }
 
-    private void applyPossessionPoints()
-    {
+    private void applyPossessionPoints() {
         // iterates through board to add one point for each tile a player has possession over
-        for (ArrayList<BoardTile> b:board.getBoard())
-        {
-            for (BoardTile bt: b)
-            {
-                if (!bt.isWall())
-                {
-                    if (bt.getPlayedTile().getPlayerPossession().equals(humanPlayer))
-                    {
+        for (ArrayList<BoardTile> b : board.getBoard()) {
+            for (BoardTile bt : b) {
+                if (!bt.isWall()) {
+                    if (bt.getPlayedTile().getPlayerPossession().equals(humanPlayer)) {
                         humanPlayer.addPoints();
-                    }
-                    else
-                    {
+                    } else {
                         computerPlayer.addPoints();
                     }
                 }
@@ -128,15 +110,11 @@ public class Game implements MouseListener, MouseMotionListener
         }
     }
 
-    public void checkGameOver()
-    {
+    public void checkGameOver() {
         // iterates through board to check if all the tiles are filled
-        for (ArrayList<BoardTile> b:board.getBoard())
-        {
-            for (BoardTile bt: b)
-            {
-                if (!bt.isWall()&&bt.isOpen())
-                {
+        for (ArrayList<BoardTile> b : board.getBoard()) {
+            for (BoardTile bt : b) {
+                if (!bt.isWall() && bt.isOpen()) {
                     isGameOver = false;
                     return;
                 }
@@ -147,24 +125,19 @@ public class Game implements MouseListener, MouseMotionListener
         isGameOver = true;
     }
 
-    public void generateMoonTiles()
-    {
-        for (int i=0;i<8;i++)
-        {
-            moonTiles.add(new MoonTile(moonPhases[i],i,this));
+    public void generateMoonTiles() {
+        for (int i = 0; i < 8; i++) {
+            moonTiles.add(new MoonTile(moonPhases[i], i, this));
         }
     }
 
     // FillBoard function courtesy of MazeSolver
-    public void fillBoard(String filename)
-    {
+    public void fillBoard(String filename) {
         // Create the arraylist to update board
         ArrayList<ArrayList<BoardTile>> tempBoard = new ArrayList<ArrayList<BoardTile>>();
-        for (int i=0; i<numRows;i++)
-        {
+        for (int i = 0; i < numRows; i++) {
             ArrayList<BoardTile> row = new ArrayList<>();
-            for (int j=0;j<numCols;j++)
-            {
+            for (int j = 0; j < numCols; j++) {
                 row.add(null);
             }
             tempBoard.add(row);
@@ -180,11 +153,9 @@ public class Game implements MouseListener, MouseMotionListener
             myReader.nextLine();
 
             // Fill temp board with dummy values that will be swapped later
-            for (int i=0; i<numRows;i++)
-            {
+            for (int i = 0; i < numRows; i++) {
                 ArrayList<BoardTile> row = new ArrayList<>();
-                for (int j=0;j<numCols;j++)
-                {
+                for (int j = 0; j < numCols; j++) {
                     row.add(null);
                 }
                 tempBoard.add(row);
@@ -192,22 +163,20 @@ public class Game implements MouseListener, MouseMotionListener
 
             int x = 0;
             int y = 0;
-            for (int row=0; row<this.numRows; row++) {
-                y = BOARD_TOPY_SPACE + row*(BoardTile.getSize()+BOARDTILE_SPACE);
+            for (int row = 0; row < this.numRows; row++) {
+                y = BOARD_TOPY_SPACE + row * (BoardTile.getSize() + BOARDTILE_SPACE);
                 String line = myReader.nextLine();
 
-                for (int col=0; col<this.numCols; col++) {
-                    x = BOARD_SIDEX_SPACE + col*(BoardTile.getSize()+BOARDTILE_SPACE);
+                for (int col = 0; col < this.numCols; col++) {
+                    x = BOARD_SIDEX_SPACE + col * (BoardTile.getSize() + BOARDTILE_SPACE);
 
                     // Create a new MazeCell for each location
-                    tempBoard.get(row).set(col,new BoardTile(row,col,x,y,this));
+                    tempBoard.get(row).set(col, new BoardTile(row, col, x, y, this));
 
                     // Set if it is a wall
                     if (line.charAt(col) == '#') {
                         tempBoard.get(row).get(col).setWall(true);
-                    }
-                    else
-                    {
+                    } else {
                         tempBoard.get(row).get(col).setWall(false);
                     }
                 }
@@ -218,41 +187,36 @@ public class Game implements MouseListener, MouseMotionListener
             e.printStackTrace();
         }
 
-        setNeighbors();
         board.setBoard(tempBoard);
+        setNeighbors();
     }
 
-    public void setNeighbors()
-    {
-        for (int i=0;i<board.getBoard().size();i++)
-        {
-            for (int j=0;j<board.getBoard().get(i).size();j++)
-            {
+    public void setNeighbors() {
+        for (int i = 0; i < board.getBoard().size(); i++) {
+            for (int j = 0; j < board.getBoard().get(i).size(); j++) {
                 BoardTile currentTile = board.getBoard().get(i).get(j);
                 setNeighborsRing(currentTile);
             }
         }
     }
 
-    public boolean setNeighborsRing(BoardTile currentTile)
-    {
+    public boolean setNeighborsRing(BoardTile currentTile) {
         boolean didSetNeighbors = false;
 
         //Checks tiles in a ring around the current tile
-        int[] rowChecks = {-1,-1,-1,0,0,1,1,1};
-        int[] colChecks = {-1,0,1,-1,1,-1,0,1};
-        //Iterates through the loop for as many times as there are tiles around a center tile (8)
-        for (int i=0;i<8;i++)
-        {
-            //Sets the row and col index to check
+        int[] rowChecks = {-1, -1, -1, 0, 0, 1, 1, 1};
+        int[] colChecks = {-1, 0, 1, -1, 1, -1, 0, 1};
+        // Iterates through the loop for as many times as there are tiles around a center tile (8)
+        for (int i = 0; i < 8; i++) {
+            //Sets  row and col index to check
             int row = currentTile.getRow() + rowChecks[i];
             int col = currentTile.getCol() + colChecks[i];
 
-            //If the tile that we want to get is not outside the board, and it is not a wall
-            if (row >=0 && row<board.getBoard().size() && col>=0 && col<board.getBoard().get(0).size() && !board.getBoard().get(row).get(col).isWall())
-            {
+            // If the tile that we want to get is not outside the board and it's not a wall
+            if (row >= 0 && row < board.getBoard().size() && col >= 0 && col < board.getBoard().get(0).size() && !board.getBoard().get(row).get(col).isWall()) {
                 currentTile.getNeighbors().add(board.getBoard().get(row).get(col));
-                didSetNeighbors=true;
+                didSetNeighbors = true;
+//                System.out.println(currentTile.getNeighbors());
             }
         }
 
@@ -262,9 +226,9 @@ public class Game implements MouseListener, MouseMotionListener
     public void generateBoard() {
         // Picking a random board
 //        int boardType = (int) (Math.random() * NUMBER_OF_BOARDS);
-        int boardType =1;//FOR TESTING ONLY
+        int boardType = 1;//FOR TESTING ONLY
 
-        fillBoard("Board"+boardType);
+        fillBoard("Board" + boardType);
     }
 
     @Override
@@ -280,28 +244,24 @@ public class Game implements MouseListener, MouseMotionListener
     @Override
     public void mouseClicked(MouseEvent e) {
         System.out.println("CLICK");
-        if (currentPlayer.equals(humanPlayer))
-        {
+        if (currentPlayer.equals(humanPlayer)) {
             System.out.println("got human player");
 
             // Check to see if a moonTile was clicked
             // If it was, save the clicked moonTile to the clickedMoonTile instance variable and set moonTileClicked = true
-            MoonTile clickedMT = getMoonTileClicked(e.getX(),e.getY());
-            if (clickedMT != null)
-            {
+            MoonTile clickedMT = getMoonTileClicked(e.getX(), e.getY());
+            if (clickedMT != null) {
                 System.out.println("clicked moontile");
                 clickedMoonTile = clickedMT;
                 moonTileClicked = true;
                 return;
             }
             // If a moonTile has already been clicked
-            if (moonTileClicked)
-            {
+            if (moonTileClicked) {
                 // Check to see if a boardTile was clicked
                 // If so, move clicked moonTile to the boardTile and update moonTileClicked to false
-                BoardTile clickedBT = getBoardTileClicked(e.getX(),e.getY());
-                if (clickedBT != null && !clickedBT.isWall() && clickedBT.isOpen())
-                {
+                BoardTile clickedBT = getBoardTileClicked(e.getX(), e.getY());
+                if (clickedBT != null && !clickedBT.isWall() && clickedBT.isOpen()) {
                     System.out.println("clicked boardtile");
                     // Update the MT x and y position to the corresponding value on the boardtile
                     clickedMoonTile.setX(clickedBT.getX());
@@ -311,9 +271,8 @@ public class Game implements MouseListener, MouseMotionListener
                     MoonTile temp = new MoonTile(currentPlayer.getHand().remove(currentPlayer.getHand().indexOf(clickedMoonTile)));
                     clickedBT.playTile(temp);
 
-                    //NEED TO MAKE THESE UPDATE POSSESSION FOR SUCCESSFUL COMBO
                     // Call function to check for any combos that the player got
-                    checkMoonCycles(temp);
+//                    checkMoonCycles(temp);
                     // Call function to check for pairs the player got
                     checkMoonPairs(temp);
 
@@ -327,31 +286,32 @@ public class Game implements MouseListener, MouseMotionListener
                 }
             }
             System.out.println("\nclicked non-clickable object");
-        }
-        else
-        {
+        } else {
             System.out.println("erm how da computer click???");
         }
         window.repaint();
     }
 
-    public void checkMoonPairs(MoonTile clickedMoonTile)
-    {
-        for (BoardTile neighbor : clickedMoonTile.getPlaced().getNeighbors())
-        {
-            if (!neighbor.isOpen())
-            {
+    public void checkMoonPairs(MoonTile clickedMoonTile) {
+        System.out.println("got into checking pairs");
+        System.out.println(clickedMoonTile.getPlaced().getNeighbors());
+        for (BoardTile neighbor : clickedMoonTile.getPlaced().getNeighbors()) {
+            System.out.println("checking a neighbor");
+            if (!neighbor.isOpen()) {
+                System.out.println("checking a played tile neighbor");
                 if (moonPhaseFillValues[findIndex(moonPhases, clickedMoonTile.getMoonPhase())] +
                         moonPhaseFillValues[findIndex(moonPhases, neighbor.getPlayedTile().getMoonPhase())] == 4
                         && !getFirstWord(clickedMoonTile.getMoonPhase()).equals(getFirstWord(neighbor.getPlayedTile().getMoonPhase()))) {
+                    neighbor.getPlayedTile().setPlayerPossession(currentPlayer);
+                    clickedMoonTile.setPlayerPossession(currentPlayer);
+                    System.out.println("set possession");
                     currentPlayer.addPoints(PTS_FOR_PAIR);
                 }
             }
         }
     }
 
-    public String getFirstWord(String str)
-    {
+    public String getFirstWord(String str) {
         if (str == null || str.isEmpty()) {
             return "";
         }
@@ -361,29 +321,89 @@ public class Game implements MouseListener, MouseMotionListener
 
     public void checkMoonCycles(MoonTile clickedMoonTile)
     {
-        int numTiles = checkMoonCyclesHelper(clickedMoonTile,0);
-        if (numTiles>=MIN_TILES_FOR_CYCLE_BONUS)
-        {
-            currentPlayer.addPoints(numTiles*CYCLE_BONUS_MULT);
-        }
-    }
+        ArrayList<ArrayList<BoardTile>> totalCyclesRight = new ArrayList<>();
+        ArrayList<ArrayList<BoardTile>> totalCyclesLeft = new ArrayList<>();
 
-    public int checkMoonCyclesHelper(MoonTile search,int cycleCount)
-    {
-        int phaseIndex = findIndex(moonPhases,search.getMoonPhase());
+        //Gets index of the phase of the origin
+        int phaseIndex = findIndex(moonPhases, clickedMoonTile.getMoonPhase());
 
-        // Iterate through all the board tile's neighbors and if they are valid, call the function recursively to check them
-        for (BoardTile neighbor : search.getPlaced().getNeighbors())
-        {
-            if (!neighbor.isOpen() && (neighbor.getPlayedTile().getMoonPhase().equals(moonPhases[phaseIndex-1]) ||
-                    neighbor.getPlayedTile().getMoonPhase().equals(moonPhases[phaseIndex+1])))
-            {
-                return checkMoonCyclesHelper(neighbor.getPlayedTile(),++cycleCount);
+        // Fills the totalCycles right and left
+        for (int i = 0; i < clickedMoonTile.getPlaced().getNeighbors().size(); i++) {
+            // If the phase index can be checked to the right
+            if (phaseIndex >= 0 && phaseIndex < moonPhases.length - 1) {
+                //Call the directional moon cycle checker
+                directionalCheckMoonCycle(totalCyclesRight.get(i), "right",clickedMoonTile.getPlaced().getNeighbors().get(i));
+            }
+            // If the phase index can be checked to the left
+            if (phaseIndex > 0 && phaseIndex <= moonPhases.length - 1) {
+                directionalCheckMoonCycle(totalCyclesLeft.get(i), "left",clickedMoonTile.getPlaced().getNeighbors().get(i));
             }
         }
 
-        // Base case: there are no valid neighbors left to check
-        return cycleCount;
+        // Iterates through each totalCycle and finds ones larger than the min tiles in cycle for pts
+        for (int i=0;i<totalCyclesRight.size();i++)
+        {
+            // If the size of the cycle is larger than the minimum
+            if (totalCyclesRight.get(i).size()>=MIN_TILES_FOR_CYCLE_BONUS)
+            {
+                // Give the current player their points
+                currentPlayer.addPoints(totalCyclesRight.get(i).size()*CYCLE_BONUS_MULT);
+                // Update possession of the tiles
+                for (BoardTile b : totalCyclesRight.get(i))
+                {
+                    b.getPlayedTile().setPlayerPossession(currentPlayer);
+                }
+            }
+        }
+
+        // Iterates through each totalCycle and finds ones larger than the min tiles in cycle for pts
+        for (int i=0;i<totalCyclesLeft.size();i++)
+        {
+            // If the size of the cycle is larger than the minimum
+            if (totalCyclesLeft.get(i).size()>=MIN_TILES_FOR_CYCLE_BONUS)
+            {
+                // Give the current player their points
+                currentPlayer.addPoints(totalCyclesLeft.get(i).size()*CYCLE_BONUS_MULT);
+                // Update possession of the tiles
+                for (BoardTile b : totalCyclesLeft.get(i))
+                {
+                    b.getPlayedTile().setPlayerPossession(currentPlayer);
+                }
+            }
+        }
+
+    }
+
+    public void directionalCheckMoonCycle(ArrayList<BoardTile> cycle, String direction,BoardTile check)
+    {
+        // Base case
+        if (check.isOpen() || check.isWall() || check.getPlayedTile()==null)
+        {
+            return;
+        }
+
+        //Gets index of the phase of the origin
+        int phaseIndex = findIndex(moonPhases, check.getPlayedTile().getMoonPhase());
+
+        // If the direction is to the right and there are no more phases to the right
+        if (direction.equals("right") && !(phaseIndex >= 0 && phaseIndex < moonPhases.length - 1))
+        {
+            return;
+        }
+
+        // If the direction is to the left and there are no more phases to the left
+        if (direction.equals("left") && !(phaseIndex > 0 && phaseIndex <= moonPhases.length - 1))
+        {
+            return;
+        }
+
+        // Recursive case
+        // Add the tile to the cycle
+        cycle.add(check);
+        for (BoardTile b : check.getNeighbors())
+        {
+            directionalCheckMoonCycle(cycle,direction,b);
+        }
     }
 
     public int findIndex(String[] arr,String str)
