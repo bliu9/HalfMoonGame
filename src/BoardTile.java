@@ -66,16 +66,16 @@ public class BoardTile
         // Default board tile color
         g.setColor(Color.darkGray);
 
-        // If there is a moon tile played, update the board tile color to the possession color
+        // If there is a moon tile played, update the board tile color to the possession color of the player
         if (playedTile != null && playedTile.getPlayerPossession() != null)
         {
             if (playedTile.getPlayerPossession().equals(game.getHumanPlayer()))
             {
-                g.setColor(Color.cyan);
+                g.setColor(game.getHumanPlayer().getPlayerColorTheme());
             }
             else if (playedTile.getPlayerPossession().equals(game.getComputerPlayer()))
             {
-                g.setColor(Color.lightGray);
+                g.setColor(game.getComputerPlayer().getPlayerColorTheme());
             }
         }
 

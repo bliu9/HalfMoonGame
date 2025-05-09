@@ -4,12 +4,17 @@ import java.util.ArrayList;
 
 public class GameViewer extends JFrame
 {
+    private static final int PLAY_TILE_X = 150;
+    private static final int PLAY_TILE_Y = 150;
     private Game game;
     public static final int WINDOW_WIDTH = 600;
     public static final int WINDOW_HEIGHT = 800;
     public static final int HAND_TILE_GAP = 25;
     public static final int HAND_Y_COORD = 685;
-    private final int TITLE_BAR_HEIGHT = 30;
+    public static final int TITLE_BAR_HEIGHT = 70;
+    public static final int POINTS_FONT_SIZE = 30;
+    public static final int H_PLAYER_PTS_START = 20;
+    public static final int C_PLAYER_PTS_START_SUB = 275;
     private ArrayList<Image> playerMoonTileImages;
     private ArrayList<Image> computerMoonTileImages;
     private Image backgroundImage;
@@ -52,7 +57,9 @@ public class GameViewer extends JFrame
         // Draw prompt for user
         if (game.gameState.equals("human"))
         {
-            g.drawString("Play a Moon Tile",200,100);
+            g.setColor(Color.BLACK);
+            g.setFont(new Font("Arial Black",Font.BOLD,POINTS_FONT_SIZE));
+            g.drawString("Play a Moon Tile",PLAY_TILE_X,PLAY_TILE_Y);
         }
 
         // Draw human player, computer player, and board

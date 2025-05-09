@@ -15,6 +15,14 @@ public class Player
     {
         this.game = game;
         this.isHumanPlayer = isHumanPlayer;
+        if (isHumanPlayer)
+        {
+            playerColorTheme = Color.cyan;
+        }
+        else
+        {
+            playerColorTheme = Color.lightGray;
+        }
         hand = new ArrayList<MoonTile>();
         generateHand();
     }
@@ -22,7 +30,7 @@ public class Player
     public void generateHand()
     {
         ArrayList<MoonTile> moonTilesCopy = new ArrayList<>(game.getMoonTiles());
-        for (int i=0;i<4;i++)
+        for (int i=0;i<sizeOfHand;i++)
         {
             hand.add(moonTilesCopy.get((int)(Math.random()*moonTilesCopy.size())));
             moonTilesCopy.remove(hand.get(i));
@@ -32,7 +40,11 @@ public class Player
 
     public void addTile()
     {
-        ArrayList<MoonTile> moonTilesCopy = new ArrayList<>(game.getMoonTiles());
+        ArrayList<MoonTile> moonTilesCopy = new ArrayList<>();
+        for (MoonTile mt : game.getMoonTiles())
+        {
+            moonTilesCopy.add(new MoonTile(mt));
+        }
         hand.add(moonTilesCopy.get((int)(Math.random()*moonTilesCopy.size())));
     }
 
@@ -45,20 +57,25 @@ public class Player
     {
         if (isHumanPlayer)
         {
-            //for debugging
-            int count = 0;
-
             // Draw hand
             setHandCoordinates();
             for (MoonTile mt : hand)
             {
                 mt.draw(g);
-
-                //for debugging
-                count++;
             }
 
-            System.out.println(count);
+            // Draw points
+            g.setFont(new Font("Arial Black",Font.BOLD,game.getWindow().POINTS_FONT_SIZE));
+            g.setColor(playerColorTheme);
+            g.drawString("Your Points:",game.getWindow().H_PLAYER_PTS_START,game.getWindow().TITLE_BAR_HEIGHT);
+            g.drawString(""+points,game.getWindow().H_PLAYER_PTS_START,game.getWindow().TITLE_BAR_HEIGHT+game.getWindow().POINTS_FONT_SIZE);
+        }
+        else
+        {
+            g.setFont(new Font("Arial Black",Font.BOLD,game.getWindow().POINTS_FONT_SIZE));
+            g.setColor(playerColorTheme);
+            g.drawString("Moon's Points:",game.getWindow().WINDOW_WIDTH-game.getWindow().C_PLAYER_PTS_START_SUB,game.getWindow().TITLE_BAR_HEIGHT);
+            g.drawString(""+points,game.getWindow().WINDOW_WIDTH-game.getWindow().C_PLAYER_PTS_START_SUB,game.getWindow().TITLE_BAR_HEIGHT+game.getWindow().POINTS_FONT_SIZE);
         }
 
         // Draw player points
@@ -105,5 +122,10 @@ public class Player
     public void setWinner(boolean winner)
     {
         this.isWinner = winner;
+    }
+
+    public Color getPlayerColorTheme()
+    {
+        return playerColorTheme;
     }
 }

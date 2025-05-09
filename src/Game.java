@@ -1,4 +1,3 @@
-import javax.swing.Timer;
 import java.awt.event.*;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -24,7 +23,7 @@ public class Game implements MouseListener, MouseMotionListener {
     private Player computerPlayer;
     private boolean isHumanPlayerTurn;
     private Player currentPlayer;
-    private static final int NUMBER_OF_BOARDS = 3;
+    private static final int NUMBER_OF_BOARDS = 5;
     private static final int cols = 5;
     private static final int rows = 4;
     private int numRows;
@@ -63,7 +62,6 @@ public class Game implements MouseListener, MouseMotionListener {
         while (!isGameOver)
         {
             doCurrentPlayerTurn();
-
 
             // Update isGameOver if all board tiles are filled
             checkGameOver();
@@ -109,6 +107,8 @@ public class Game implements MouseListener, MouseMotionListener {
                     //do nothing
                 }
 
+                gameWait = true;
+
             }
 
             //draw the "play a moon tile" prompt on the moon
@@ -131,6 +131,7 @@ public class Game implements MouseListener, MouseMotionListener {
             // Update game state and switch current player
             currentPlayer = humanPlayer;
             gameState = "human";
+            gameWait = true;
             //draw a "computer's turn"
             //set game state to computer player turn
             //play a random moon tile from computer hand onto a random open board tile
@@ -152,14 +153,14 @@ public class Game implements MouseListener, MouseMotionListener {
             clickedBT = board.getBoard().get((int)(Math.random()*board.getBoard().size())).get((int)(Math.random()*board.getBoard().get(0).size()));
         }
 
-        playCurrentMoonTile(clickedBT);
+        playCurrentMoonTile(clickedBT,currentPlayer);
     }
 
     private void applyPossessionPoints() {
         // iterates through board to add one point for each tile a player has possession over
         for (ArrayList<BoardTile> b : board.getBoard()) {
             for (BoardTile bt : b) {
-                if (!bt.isWall() && !bt.isOpen())
+                if (!bt.isWall() && !bt.isOpen() && bt.getPlayedTile().getPlayerPossession()!=null)
                 {
                     if (bt.getPlayedTile().getPlayerPossession().equals(humanPlayer))
                     {
@@ -289,8 +290,7 @@ public class Game implements MouseListener, MouseMotionListener {
 
     public void generateBoard() {
         // Picking a random board
-//        int boardType = (int) (Math.random() * NUMBER_OF_BOARDS);
-        int boardType = 1;//FOR TESTING ONLY
+        int boardType = (int) (Math.random() * NUMBER_OF_BOARDS)+1;
 
         fillBoard("Board" + boardType);
     }
@@ -326,11 +326,7 @@ public class Game implements MouseListener, MouseMotionListener {
                 // Check to see if a boardTile was clicked
                 // If so, move clicked moonTile to the boardTile and update moonTileClicked to false
                 BoardTile clickedBT = getBoardTileClicked(e.getX(), e.getY());
-
-                playCurrentMoonTile(clickedBT);
-
-                //Allow the game to progress
-                gameWait = false;
+                playCurrentMoonTile(clickedBT, currentPlayer);
                 return;
             }
             System.out.println("\nclicked non-clickable object");
@@ -340,33 +336,34 @@ public class Game implements MouseListener, MouseMotionListener {
         window.repaint();
     }
 
-    public void playCurrentMoonTile(BoardTile clickedBT)
+    public void playCurrentMoonTile(BoardTile clickedBT, Player player)
     {
-        if (clickedBT != null && !clickedBT.isWall() && clickedBT.isOpen()) {
+        if (clickedBT != null && !clickedBT.isWall() && clickedBT.isOpen())
+        {
+            //Allow the game to progress
+            gameWait = false;
             System.out.println("clicked boardtile");
             // Update the MT x and y position to the corresponding value on the boardtile
             clickedMoonTile.setX(clickedBT.getX());
             clickedMoonTile.setY(clickedBT.getY());
 
             // Remove the MT from hand and move it to the board
-            MoonTile temp = new MoonTile(currentPlayer.getHand().remove(currentPlayer.getHand().indexOf(clickedMoonTile)));
+            MoonTile temp = new MoonTile(player.getHand().remove(player.getHand().indexOf(clickedMoonTile)));
             clickedBT.playTile(temp);
 
             // Call function to check for any combos that the player got
 //                    checkMoonCycles(temp);
             // Call function to check for pairs the player got
-            checkMoonPairs(temp);
+            checkMoonPairs(temp,player);
 
             // Reset the variables used for swapping
             clickedMoonTile = null;
             moonTileClicked = false;
-//            window.repaint();
-//                    System.out.print(temp);
             System.out.println("swap code ran");
         }
     }
 
-    public void checkMoonPairs(MoonTile clickedMoonTile)
+    public void checkMoonPairs(MoonTile clickedMoonTile, Player player)
     {
         System.out.println("got into checking pairs");
         System.out.println(clickedMoonTile.getPlaced().getNeighbors());
@@ -381,24 +378,22 @@ public class Game implements MouseListener, MouseMotionListener {
                         && !getFirstWord(clickedMoonTile.getMoonPhase()).equals(getFirstWord(neighbor.getPlayedTile().getMoonPhase()))) {
 
                     // Set possession of both tiles and add points
-                    neighbor.getPlayedTile().setPlayerPossession(currentPlayer);
-                    clickedMoonTile.setPlayerPossession(currentPlayer);
+                    neighbor.getPlayedTile().setPlayerPossession(player);
+                    clickedMoonTile.setPlayerPossession(player);
                     System.out.println("set possession");
-                    currentPlayer.addPoints(PTS_FOR_FULL_MOON_PAIR);
+                    player.addPoints(PTS_FOR_FULL_MOON_PAIR);
                 }
                 // Check to see if the neighbor tile creates a matching pair
                 else if (clickedMoonTile.getMoonPhase().equals(neighbor.getPlayedTile().getMoonPhase()))
                 {
                     // Set possession of both tiles and add points
-                    neighbor.getPlayedTile().setPlayerPossession(currentPlayer);
-                    clickedMoonTile.setPlayerPossession(currentPlayer);
+                    neighbor.getPlayedTile().setPlayerPossession(player);
+                    clickedMoonTile.setPlayerPossession(player);
                     System.out.println("set possession");
-                    currentPlayer.addPoints(PTS_FOR_MATCHING_PAIR);
+                    player.addPoints(PTS_FOR_MATCHING_PAIR);
                 }
             }
         }
-//        currentPlayer.addTile();
-//        window.repaint();
     }
 
     public String getFirstWord(String str) {
