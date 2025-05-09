@@ -30,6 +30,12 @@ public class Player
         System.out.println(hand);
     }
 
+    public void addTile()
+    {
+        ArrayList<MoonTile> moonTilesCopy = new ArrayList<>(game.getMoonTiles());
+        hand.add(moonTilesCopy.get((int)(Math.random()*moonTilesCopy.size())));
+    }
+
     public ArrayList<MoonTile> getHand()
     {
         return hand;
@@ -39,12 +45,20 @@ public class Player
     {
         if (isHumanPlayer)
         {
+            //for debugging
+            int count = 0;
+
             // Draw hand
             setHandCoordinates();
             for (MoonTile mt : hand)
             {
                 mt.draw(g);
+
+                //for debugging
+                count++;
             }
+
+            System.out.println(count);
         }
 
         // Draw player points
@@ -55,11 +69,17 @@ public class Player
         int handLen = (hand.get(0).getSize() + GameViewer.HAND_TILE_GAP) * hand.size();
         int sideSpace = (GameViewer.WINDOW_WIDTH-handLen)/2;
 
+        //for debugging
+        System.out.println("before setting coords "+hand.size());
+
         for (int i = 0; i < hand.size(); i++)
         {
             hand.get(i).setX(sideSpace+(GameViewer.HAND_TILE_GAP/2)+(i*(hand.get(0).getSize()+GameViewer.HAND_TILE_GAP)));
             hand.get(i).setY(GameViewer.HAND_Y_COORD);
         }
+
+        //for debugging
+        System.out.println("after setting coords "+hand.size());
     }
 
     public boolean isWinner()

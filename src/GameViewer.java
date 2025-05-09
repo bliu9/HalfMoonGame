@@ -49,6 +49,12 @@ public class GameViewer extends JFrame
         g.drawImage(backgroundImage,0,0,WINDOW_WIDTH,WINDOW_HEIGHT,this);
         g.drawImage(topMoonImage,40,-250,500,500,this);
 
+        // Draw prompt for user
+        if (game.gameState.equals("human"))
+        {
+            g.drawString("Play a Moon Tile",200,100);
+        }
+
         // Draw human player, computer player, and board
         game.getHumanPlayer().draw(g);
         game.getComputerPlayer().draw(g);
