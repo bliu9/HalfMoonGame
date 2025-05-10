@@ -1,3 +1,5 @@
+// Bryan Liu for CS2
+
 import java.awt.event.*;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -6,7 +8,9 @@ import java.util.Scanner;
 
 public class Game implements MouseListener, MouseMotionListener {
     private static final long DELAY_FOR_COMPUTER_TURN_MILLI = 1000;
+    private static final double END_GAME_PAUSE = 3500;
     public String gameState;
+    private boolean drawEndScreen = true;
     private boolean gameWait;
     public static final int BOARD_SIDEX_SPACE = 81;
     public static final int BOARD_TOPY_SPACE = 215;
@@ -30,9 +34,11 @@ public class Game implements MouseListener, MouseMotionListener {
     private int numCols;
     private GameViewer window;
     private ArrayList<MoonTile> moonTiles;
+    private String clickState;
     private static final String[] moonPhases = {"empty", "left sliver", "left half", "left most",
             "full", "right most", "right half", "right sliver"};
     private static final int[] moonPhaseFillValues = {0, 1, 2, 3, 4, 3, 2, 1};
+    private boolean fullReset = false;
 
 
     public Game() {
@@ -57,7 +63,17 @@ public class Game implements MouseListener, MouseMotionListener {
         playGame();
     }
 
-    private void playGame() {
+    // Timer to pause the game for a bit
+    public void timer(double time)
+    {
+        long time1 = System.currentTimeMillis();
+        while (System.currentTimeMillis() < time1+time)
+        {
+            //do nothing
+        }
+    }
+
+    public void playGame() {
         // While the game isn't over
         while (!isGameOver)
         {
@@ -68,18 +84,42 @@ public class Game implements MouseListener, MouseMotionListener {
         }
         System.out.println("made it out of game loop");
 
-        // Apply points to players for possession
-        applyPossessionPoints();
-
-        // Set who the winner is and display win screen
-        if (humanPlayer.getPoints() > computerPlayer.getPoints()) {
-            humanPlayer.setWinner(true);
-        } else if (humanPlayer.getPoints() < computerPlayer.getPoints()) {
-            computerPlayer.setWinner(true);
+        // Prevent redoing the end screen process if it's time for full reset
+        // if not then do the end screen process
+        if (fullReset)
+        {
+            System.out.println("fullReset = true");
+            return;
         }
-        //draw win screen
-        //if both players have their iswinner == false, it was a tie
+        else if (drawEndScreen)
+        {
+            System.out.println("fullReset = false");
 
+            // Freeze and do game over prompt
+            gameState = "game over";
+            window.repaint();
+            timer(END_GAME_PAUSE);
+
+            System.out.println("counting possession");
+            // Apply points to players for possession and display it
+            applyPossessionPoints();
+
+            // Set who the winner is
+            if (humanPlayer.getPoints() > computerPlayer.getPoints()) {
+                humanPlayer.setWinner(true);
+            } else if (humanPlayer.getPoints() < computerPlayer.getPoints()) {
+                computerPlayer.setWinner(true);
+            }
+
+            // Draw win screen with play again
+            gameState = "win/lose";
+            window.repaint();
+
+            // Have the mouse click detect for clicking the play again button
+            clickState = "play again";
+
+            drawEndScreen = false;
+        }
     }
 
     private void doCurrentPlayerTurn() {
@@ -101,21 +141,11 @@ public class Game implements MouseListener, MouseMotionListener {
                 gameState = "computer";
 
                 // Pause the game for a bit to allow the player to take in what their move did
-                long time1 = System.currentTimeMillis();
-                while (System.currentTimeMillis() < time1+DELAY_FOR_COMPUTER_TURN_MILLI)
-                {
-                    //do nothing
-                }
+                timer(DELAY_FOR_COMPUTER_TURN_MILLI);
 
                 gameWait = true;
 
             }
-
-            //draw the "play a moon tile" prompt on the moon
-            //set game state to human player turn (make this allow the detection code to run)
-            //add a check moon cycle function call once the player places a tile
-            //add a tile to the hand of the current player
-            //update current player to computer player
         }
         else if (currentPlayer.equals(computerPlayer))
         {
@@ -132,12 +162,6 @@ public class Game implements MouseListener, MouseMotionListener {
             currentPlayer = humanPlayer;
             gameState = "human";
             gameWait = true;
-            //draw a "computer's turn"
-            //set game state to computer player turn
-            //play a random moon tile from computer hand onto a random open board tile
-            //call check moon cycle on that played tile
-            //add a tile to the hand of the current player
-            //update current player to human player
         }
     }
 
@@ -153,10 +177,15 @@ public class Game implements MouseListener, MouseMotionListener {
             clickedBT = board.getBoard().get((int)(Math.random()*board.getBoard().size())).get((int)(Math.random()*board.getBoard().get(0).size()));
         }
 
+        // Play moon tile into the random board tile
         playCurrentMoonTile(clickedBT,currentPlayer);
     }
 
-    private void applyPossessionPoints() {
+    private void applyPossessionPoints()
+    {
+        // Set initial player points before possession taken into account
+        int[] H_C_PTS = new int[2];
+
         // iterates through board to add one point for each tile a player has possession over
         for (ArrayList<BoardTile> b : board.getBoard()) {
             for (BoardTile bt : b) {
@@ -164,15 +193,24 @@ public class Game implements MouseListener, MouseMotionListener {
                 {
                     if (bt.getPlayedTile().getPlayerPossession().equals(humanPlayer))
                     {
-                        humanPlayer.addPoints();
+                        H_C_PTS[0] ++;
                     }
                     else
                     {
-                        computerPlayer.addPoints();
+                        H_C_PTS[1] ++;
                     }
                 }
             }
         }
+
+        // Set game state to display the points
+        gameState = H_C_PTS[0]+""+H_C_PTS[1]+" possession";
+        window.repaint();
+        timer(END_GAME_PAUSE);
+
+        // Update the players' points
+        humanPlayer.addPoints(H_C_PTS[0]);
+        computerPlayer.addPoints(H_C_PTS[1]);
     }
 
     public void checkGameOver() {
@@ -201,13 +239,6 @@ public class Game implements MouseListener, MouseMotionListener {
     public void fillBoard(String filename) {
         // Create the arraylist to update board
         ArrayList<ArrayList<BoardTile>> tempBoard = new ArrayList<ArrayList<BoardTile>>();
-        for (int i = 0; i < numRows; i++) {
-            ArrayList<BoardTile> row = new ArrayList<>();
-            for (int j = 0; j < numCols; j++) {
-                row.add(null);
-            }
-            tempBoard.add(row);
-        }
 
         try {
             File myObj = new File(filename);
@@ -308,6 +339,20 @@ public class Game implements MouseListener, MouseMotionListener {
     @Override
     public void mouseClicked(MouseEvent e) {
         System.out.println("CLICK");
+        // If the clickState is equal to play again
+        if (clickState != null && clickState.equals("play again"))
+        {
+            // If the user clicks the play again button
+            if (didClickPlayAgain(e.getX(),e.getY()))
+            {
+                // Reset the game
+                fullReset = true;
+                reset();
+                return;
+            }
+        }
+
+        // If the current player is the human player
         if (currentPlayer.equals(humanPlayer)) {
             System.out.println("got human player");
 
@@ -336,6 +381,11 @@ public class Game implements MouseListener, MouseMotionListener {
         window.repaint();
     }
 
+    private boolean didClickPlayAgain(int x, int y)
+    {
+        return window.PLAY_AGAIN_X <= x && x <= window.PLAY_AGAIN_X + window.PLAY_AGAIN_W && window.PLAY_AGAIN_Y <= y && y <= window.PLAY_AGAIN_Y + window.PLAY_AGAIN_H;
+    }
+
     public void playCurrentMoonTile(BoardTile clickedBT, Player player)
     {
         if (clickedBT != null && !clickedBT.isWall() && clickedBT.isOpen())
@@ -351,7 +401,7 @@ public class Game implements MouseListener, MouseMotionListener {
             MoonTile temp = new MoonTile(player.getHand().remove(player.getHand().indexOf(clickedMoonTile)));
             clickedBT.playTile(temp);
 
-            // Call function to check for any combos that the player got
+            // Call function to check for any combos that the player got // not working right now
 //                    checkMoonCycles(temp);
             // Call function to check for pairs the player got
             checkMoonPairs(temp,player);
@@ -556,6 +606,24 @@ public class Game implements MouseListener, MouseMotionListener {
 
     public static void main(String[] args) {
         Game game = new Game();
+//        while (true)
+//        {
+//            if (game.fullReset)
+//            {
+//                game.reset();
+//            }
+//
+//            // Something a friend in AT CS recommended to prevent gui freezing up
+//            // gives the cpu time to breathe in while in this infinite loop
+//            try
+//            {
+//                Thread.sleep(100);
+//            }
+//            catch (InterruptedException e)
+//            {
+//                e.printStackTrace();
+//            }
+//        }
     }
 
     public ArrayList<MoonTile> getMoonTiles() {
@@ -587,5 +655,45 @@ public class Game implements MouseListener, MouseMotionListener {
 
     public Player getHumanPlayer() {
         return humanPlayer;
+    }
+
+    // Resets the game
+    private void reset()
+    {
+        // Reset state variables
+        isGameOver = false;
+        fullReset = false;
+        clickedMoonTile = null;
+        moonTileClicked = false;
+        gameState = "human";
+        gameWait = true;
+        clickState = null;
+        drawEndScreen = true;
+
+        // Recreate board
+        board.getBoard().clear();
+        generateBoard();
+
+        System.out.println(board.getBoard().size());
+
+        // Recreate players
+        humanPlayer = new Player(this,true);
+        computerPlayer = new Player(this,false);
+        currentPlayer = humanPlayer;
+
+        // Start new game in a new thread
+        // Learned from
+        https://www.geeksforgeeks.org/java-program-to-create-a-thread/
+        // Finding this earlier would have been really helpful with card game
+        // I was getting a version of this general kind of issue when trying to add a reset feature to my uno game
+        // but dropped it b/c nothing I was doing was working
+        new Thread(() -> replayGame()).start();
+    }
+
+    private void replayGame()
+    {
+        gameState = "human";
+        window.repaint();
+        playGame();
     }
 }

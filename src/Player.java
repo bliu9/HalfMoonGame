@@ -1,3 +1,5 @@
+// Bryan Liu for CS2
+
 import java.awt.*;
 import java.util.ArrayList;
 
@@ -13,6 +15,7 @@ public class Player
 
     public Player(Game game, boolean isHumanPlayer)
     {
+        // set initialize instance variables
         this.game = game;
         this.isHumanPlayer = isHumanPlayer;
         if (isHumanPlayer)
@@ -21,7 +24,7 @@ public class Player
         }
         else
         {
-            playerColorTheme = Color.lightGray;
+            playerColorTheme = Color.DARK_GRAY;
         }
         hand = new ArrayList<MoonTile>();
         generateHand();
@@ -29,6 +32,7 @@ public class Player
 
     public void generateHand()
     {
+        // Goes through moon tiles and gets random tiles to put into the player's hand
         ArrayList<MoonTile> moonTilesCopy = new ArrayList<>(game.getMoonTiles());
         for (int i=0;i<sizeOfHand;i++)
         {
@@ -40,6 +44,7 @@ public class Player
 
     public void addTile()
     {
+        // Makes a deep copy of the moon tiles and chooses a random one of those to add to the hand
         ArrayList<MoonTile> moonTilesCopy = new ArrayList<>();
         for (MoonTile mt : game.getMoonTiles())
         {
@@ -72,6 +77,7 @@ public class Player
         }
         else
         {
+            // Draw computer player points
             g.setFont(new Font("Arial Black",Font.BOLD,game.getWindow().POINTS_FONT_SIZE));
             g.setColor(playerColorTheme);
             g.drawString("Moon's Points:",game.getWindow().WINDOW_WIDTH-game.getWindow().C_PLAYER_PTS_START_SUB,game.getWindow().TITLE_BAR_HEIGHT);
@@ -86,17 +92,18 @@ public class Player
         int handLen = (hand.get(0).getSize() + GameViewer.HAND_TILE_GAP) * hand.size();
         int sideSpace = (GameViewer.WINDOW_WIDTH-handLen)/2;
 
-        //for debugging
-        System.out.println("before setting coords "+hand.size());
+//        //for debugging
+//        System.out.println("before setting coords "+hand.size());
 
+        // Go through the player's hand and set the x and y corrdinates so that everything is evenly spaced
         for (int i = 0; i < hand.size(); i++)
         {
             hand.get(i).setX(sideSpace+(GameViewer.HAND_TILE_GAP/2)+(i*(hand.get(0).getSize()+GameViewer.HAND_TILE_GAP)));
             hand.get(i).setY(GameViewer.HAND_Y_COORD);
         }
 
-        //for debugging
-        System.out.println("after setting coords "+hand.size());
+//        //for debugging
+//        System.out.println("after setting coords "+hand.size());
     }
 
     public boolean isWinner()

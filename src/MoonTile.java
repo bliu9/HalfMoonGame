@@ -1,3 +1,5 @@
+// Bryan Liu for CS2
+
 import java.awt.*;
 
 public class MoonTile
@@ -41,7 +43,14 @@ public class MoonTile
 
     public void draw(Graphics g)
     {
-        g.drawImage(game.getWindow().getPlayerMoonTileImages().get(moonImage),x,y,size,size,game.getWindow());
+        if (playerPossession != null && playerPossession.equals(game.getComputerPlayer()))
+        {
+            g.drawImage(game.getWindow().getComputerMoonTileImages().get(moonImage), x, y, size, size, game.getWindow());
+        }
+        else
+        {
+            g.drawImage(game.getWindow().getPlayerMoonTileImages().get(moonImage), x, y, size, size, game.getWindow());
+        }
     }
 
     // Getters

@@ -1,8 +1,11 @@
+// Bryan Liu for CS2
+
 import java.awt.*;
 import java.util.ArrayList;
 
 public class BoardTile
 {
+    public static final Color BOARD_THEME_COLOR = Color.darkGray;
     private boolean isWall;
     private boolean isOpen;
     private MoonTile playedTile;
@@ -17,6 +20,7 @@ public class BoardTile
 
     public BoardTile(boolean isWall,int row,int col,int x, int y, Game game)
     {
+        // initialize instance variables
         this.row = row;
         this.col = col;
         this.x = x;
@@ -32,6 +36,7 @@ public class BoardTile
 
     public BoardTile (int row,int col,int x, int y, Game game)
     {
+        // copy over all the values of the old board tile
         this.row = row;
         this.col = col;
         this.x = x;
@@ -44,16 +49,21 @@ public class BoardTile
     // Sets the tile of the cell to the played MoonTile
     public void playTile(MoonTile playedTile)
     {
+        // update played tile
         this.playedTile=playedTile;
 
+        // set row and col
         playedTile.setRow(row);
         playedTile.setCol(col);
 
+        // set x and y pos
         playedTile.setX(x+((size-playedTile.getSize())/2));
         playedTile.setY(y+((size-playedTile.getSize())/2));
 
+        // update where moon tile placed board tile refercne
         playedTile.setPlaced(this);
 
+        // update isopen
         this.isOpen = false;
     }
 
@@ -64,7 +74,7 @@ public class BoardTile
         isDrawn=true;
 
         // Default board tile color
-        g.setColor(Color.darkGray);
+        g.setColor(BOARD_THEME_COLOR);
 
         // If there is a moon tile played, update the board tile color to the possession color of the player
         if (playedTile != null && playedTile.getPlayerPossession() != null)
@@ -136,13 +146,4 @@ public class BoardTile
     {
         return neighbors;
     }
-
-    public int getCenterX() {
-        return x + size / 2;
-    }
-
-    public int getCenterY() {
-        return y + size / 2;
-    }
-
 }
