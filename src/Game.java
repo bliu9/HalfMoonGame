@@ -27,8 +27,8 @@ public class Game implements MouseListener, MouseMotionListener {
     private Player computerPlayer;
     private boolean isHumanPlayerTurn;
     private Player currentPlayer;
-    private static final int NUMBER_OF_BOARDS = 5;
-    private static final int cols = 5;
+    private static final int NUMBER_OF_BOARDS = 7;
+    private static final int cols = 4;
     private static final int rows = 4;
     private int numRows;
     private int numCols;
